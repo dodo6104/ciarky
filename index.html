@@ -1,117 +1,3 @@
-
-Claude finished the response
-naprogrmauj mi html a javascript strank kde budu fdva gulate buttons v jednom bude Karin v druhom dominik a bude to pripocitavat ciarky vsetko v jednom html
-
-Read a file, created a file, shared files
-Hotovo. Kliknutie na guľaté tlačidlo pridá čiarku, čiarky sa kreslia po piatich (štyri zvislé a jedna cez ne). Pod každým je tlačidlo na odobranie a dole spoločné vynulovanie.
-
-
-Ciarky
-Code·HTML 
-nad karin daj iconu clowna
-
-Edited a file, shared files
-Klaun je nad tlačidlom Karin.
-
-
-Ciarky
-Code·HTML 
-zarovnaj dominika
-
-Edited a file, shared files
-Dominik má nad sebou neviditeľnú medzeru rovnakej výšky, takže obe tlačidlá aj čísla sú teraz v jednej línii.
-
-
-Ciarky
-Code·HTML 
-nad dominka daj anjelika
-
-Edited a file, shared files
-Anjelik je nad Dominikom, zarovnanie ostáva rovnaké.
-
-
-Ciarky
-Code·HTML 
-pridaj sa nech si to pamata v prehlidaci
-
-Edited a file, shared files
-Stav sa ukladá do localStorage, takže po zatvorení a otvorení stránky tam čiarky ostanú. Funguje to, keď si súbor stiahneš a otvoríš vo svojom prehliadači. V náhľade tu v Claude je localStorage blokovaný, takže tam sa počítadlo po obnovení vynuluje, ale kód kvôli tomu nespadne.
-
-
-Ciarky
-Code·HTML 
-ako to mam nazvat aby som mohol pusbish na github?
-
-Súbor premenuj na index.html a daj ho do koreňa repozitára. GitHub Pages automaticky načíta index.html, takže stránka pôjde rovno na URL bez dopisovania názvu súboru.
-
-Repozitár si pomenuj hocijako, napríklad ciarky. Potom v Settings → Pages nastav Source na Deploy from a branch, branch main, folder / (root). Stránka bude na https://tvojmeno.github.io/ciarky/.
-
-Ak by si chcel adresu bez podpriečinka (https://tvojmeno.github.io/), repozitár sa musí volať presne tvojmeno.github.io.
-
-ako tam pravit taky jednoduchy backend aby vsade bolo cidiet kto ma kolko ciarok
-
-Finding a way to share counts across devices.
-Finding a way to share counts across devices.
-GitHub Pages je len statický hosting, takže backend musí bežať inde. Máš dve rozumné cesty.
-
-Najjednoduchšia: Firebase Realtime Database
-Nepíšeš žiadny server, len pridáš do HTML Firebase SDK. Dáta sa synchronizujú naživo, takže keď Karin klikne na telefóne, tebe sa číslo zmení samo bez refreshu. Postup: vytvoríš projekt v konzole Firebase, zapneš Realtime Database v testovacom režime, skopíruješ konfiguračný objekt do stránky a namiesto localStorage zapisuješ na cestu typu ciarky/karin. Na pripočítavanie použiješ operáciu increment, aby sa dve súčasné kliknutia neprepísali. Zadarmo to pokryje takéto malé použitie s veľkou rezervou.
-
-Ak chceš vlastné API: Cloudflare Worker + KV
-Napíšeš asi tridsať riadkov, ktoré vedia GET (vráti počty) a POST (pripočíta jednu). Stránka na Pages si to ťahá cez fetch. Tiež zadarmo, ale musíš riešiť CORS a sám si pollovať zmeny, realtime tam zadarmo nedostaneš.
-
-Pri oboch platí, že kľúč je v klientskom kóde viditeľný, takže ktokoľvek s adresou vie čiarky meniť. Pri počítadle medzi vami dvoma to nevadí, len to nedávaj do verejného repa s citlivými dátami.
-
-Ktorú verziu chceš, prepíšem ti tú stránku rovno na ňu.
-
-spravme to na google tabulky
-
-Ran a command, created a file, shared files
-Tabuľka je backend, Apps Script je API nad ňou.
-
-Postup:
-
-Vytvor novú Google tabuľku. Hárok ani bunky nemusíš pripravovať, skript si ich založí sám.
-V tabuľke choď na Rozšírenia → Apps Script a obsah Code.gs vlož namiesto toho, čo tam je.
-Vpravo hore Nasadiť → Nové nasadenie → typ Webová aplikácia. Spúšťať ako: ja. Kto má prístup: ktokoľvek. Potvrď oprávnenia, Google pri prvom raze vypíše varovanie o neoverenej aplikácii, tam klikneš na Rozšírené a Prejsť na projekt.
-Skopíruj adresu nasadenia, tú čo končí na /exec, a vlož ju v index.html do premennej API namiesto SEM_VLOZ_URL.
-index.html daj na GitHub Pages.
-Stránka si ťahá stav pri otvorení a potom každých desať sekúnd, takže keď Karin klikne na telefóne, tebe sa to do desiatich sekúnd objaví. Zápis ide cez zámok, takže dve kliknutia naraz sa neprepíšu.
-
-Dve veci, s ktorými počítaj. Adresa skriptu je v kóde verejná, takže kto ju nájde, vie čiarky meniť, čo pri vašom počítadle asi nevadí. A Apps Script má pri každom zápise zopár sto milisekúnd réžie, takže rýchle klikanie za sebou bude pôsobiť trochu lenivo.
-
-
-Index
-Code·HTML 
-
-Code
-GS 
-Deployment successfully updated.
-Version 1 on 13. 9. 2026, 23:29
-Deployment ID
-AKfycbw7_QYLDXyV8Ussn7KTLiQWg883NTgS0RkWgIWDchCpIVMBQwcYr2FnZmLxATQ6ac7n
-Web app
-URL
-https://script.google.com/macros/s/AKfycbw7_QYLDXyV8Ussn7KTLiQWg883NTgS0RkWgIWDchCpIVMBQwcYr2FnZmLxATQ6ac7n/exec
-
-Edited a file, shared files
-Adresa je vložená, súbor je pripravený na nahranie do repa.
-
-Rýchla kontrola pred publikovaním: otvor tú /exec adresu priamo v prehliadači. Ak sa vypíše {"karin":0,"dominik":0}, skript aj tabuľka fungujú. Ak ťa to presmeruje na prihlásenie alebo vypíše chybu o oprávneniach, v nasadení nie je nastavené Kto má prístup na „ktokoľvek".
-
-Ešte jedna vec. Keď budeš skript neskôr upravovať, musíš vždy nasadiť novú verziu, inak ti stránka stále hovorí so starým kódom, aj keď máš v editore uložené zmeny.
-
-
-Index
-Code·HTML 
-
-Write a message…
-
-
-Claude is AI and can make mistakes. Please double-check responses.
-
-
-Index · HTML
 <!DOCTYPE html>
 <html lang="sk">
 <head>
@@ -126,9 +12,9 @@ Index · HTML
     --karin: #e0a2b4;
     --dominik: #8fb8c9;
   }
- 
+
   * { box-sizing: border-box; }
- 
+
   body {
     margin: 0;
     min-height: 100vh;
@@ -143,7 +29,7 @@ Index · HTML
     padding: 32px 16px;
     gap: 28px;
   }
- 
+
   h1 {
     margin: 0;
     font-size: 28px;
@@ -151,7 +37,7 @@ Index · HTML
     letter-spacing: .12em;
     opacity: .75;
   }
- 
+
   .tabulka {
     display: flex;
     gap: 48px;
@@ -159,7 +45,7 @@ Index · HTML
     justify-content: center;
     align-items: flex-start;
   }
- 
+
   .hrac {
     width: 220px;
     display: flex;
@@ -167,13 +53,13 @@ Index · HTML
     align-items: center;
     gap: 16px;
   }
- 
+
   .ikona {
     font-size: 44px;
     line-height: 1;
     margin-bottom: -4px;
   }
- 
+
   .tlacidlo {
     width: 150px;
     height: 150px;
@@ -188,7 +74,7 @@ Index · HTML
     transition: transform .12s ease, box-shadow .12s ease;
     box-shadow: 0 10px 0 rgba(0,0,0,.25);
   }
- 
+
   .tlacidlo:hover { transform: translateY(-2px); }
   .tlacidlo:active {
     transform: translateY(8px);
@@ -196,12 +82,12 @@ Index · HTML
   }
   .tlacidlo:focus-visible { outline: 3px solid var(--krieda); outline-offset: 6px; }
   .tlacidlo[disabled] { opacity: .6; cursor: default; }
- 
+
   .cislo {
     font-size: 46px;
     line-height: 1;
   }
- 
+
   .ciarky {
     display: flex;
     flex-wrap: wrap;
@@ -210,21 +96,21 @@ Index · HTML
     justify-content: center;
     align-items: flex-start;
   }
- 
+
   .skupina {
     position: relative;
     display: flex;
     gap: 6px;
     height: 40px;
   }
- 
+
   .ciarka {
     width: 3px;
     height: 40px;
     background: var(--krieda);
     border-radius: 2px;
   }
- 
+
   .skupina.plna::after {
     content: "";
     position: absolute;
@@ -236,7 +122,7 @@ Index · HTML
     border-radius: 2px;
     transform: rotate(-20deg);
   }
- 
+
   .mensie {
     background: none;
     border: 1px solid rgba(242,239,230,.3);
@@ -247,26 +133,26 @@ Index · HTML
     border-radius: 999px;
     cursor: pointer;
   }
- 
+
   .mensie:hover { border-color: var(--krieda); }
- 
+
   .prazdne { opacity: .35; font-size: 15px; }
- 
+
   .stav {
     font-size: 14px;
     opacity: .5;
     min-height: 20px;
   }
- 
+
   @media (prefers-reduced-motion: reduce) {
     .tlacidlo { transition: none; }
   }
 </style>
 </head>
 <body>
- 
+
 <h1>Čiarky</h1>
- 
+
 <div class="tabulka">
   <div class="hrac">
     <div class="ikona" aria-hidden="true">🤡</div>
@@ -275,7 +161,7 @@ Index · HTML
     <div class="ciarky" id="ciarky-karin"></div>
     <button class="mensie" onclick="posli('karin', -1)">Odobrať čiarku</button>
   </div>
- 
+
   <div class="hrac">
     <div class="ikona" aria-hidden="true">😇</div>
     <button class="tlacidlo" style="--farba: var(--dominik)" onclick="posli('dominik', 1)">Dominik</button>
@@ -284,17 +170,17 @@ Index · HTML
     <button class="mensie" onclick="posli('dominik', -1)">Odobrať čiarku</button>
   </div>
 </div>
- 
+
 <button class="mensie" onclick="vynuluj()">Vynulovať obe</button>
 <div class="stav" id="stav">Načítavam...</div>
- 
+
 <script>
   // Sem vlož adresu nasadeného Apps Scriptu (končí na /exec)
   const API = 'https://script.google.com/macros/s/AKfycbw7_QYLDXyV8Ussn7KTLiQWg883NTgS0RkWgIWDchCpIVMBQwcYr2FnZmLxATQ6ac7n/exec';
- 
+
   const stav = { karin: 0, dominik: 0 };
   const hlaska = document.getElementById('stav');
- 
+
   async function nacitaj() {
     try {
       const r = await fetch(API);
@@ -307,7 +193,7 @@ Index · HTML
       hlaska.textContent = 'Nepodarilo sa spojiť s tabuľkou.';
     }
   }
- 
+
   async function posli(kto, zmena) {
     if (zmena < 0 && stav[kto] === 0) return;
     stav[kto] += zmena;
@@ -315,7 +201,7 @@ Index · HTML
     hlaska.textContent = 'Ukladám...';
     await odosli({ kto: kto, zmena: zmena });
   }
- 
+
   async function vynuluj() {
     stav.karin = 0;
     stav.dominik = 0;
@@ -323,7 +209,7 @@ Index · HTML
     hlaska.textContent = 'Ukladám...';
     await odosli({ akcia: 'vynuluj' });
   }
- 
+
   async function odosli(telo) {
     try {
       const r = await fetch(API, {
@@ -340,19 +226,19 @@ Index · HTML
       hlaska.textContent = 'Uloženie zlyhalo, skús znova.';
     }
   }
- 
+
   function vykresliVsetko() {
     vykresli('karin');
     vykresli('dominik');
   }
- 
+
   function vykresli(kto) {
     const pocet = stav[kto];
     document.getElementById('cislo-' + kto).textContent = pocet;
- 
+
     const box = document.getElementById('ciarky-' + kto);
     box.innerHTML = '';
- 
+
     if (pocet === 0) {
       const p = document.createElement('span');
       p.className = 'prazdne';
@@ -360,14 +246,14 @@ Index · HTML
       box.appendChild(p);
       return;
     }
- 
+
     const plneSkupiny = Math.floor(pocet / 5);
     const zvysok = pocet % 5;
- 
+
     for (let i = 0; i < plneSkupiny; i++) box.appendChild(skupina(4, true));
     if (zvysok > 0) box.appendChild(skupina(zvysok, false));
   }
- 
+
   function skupina(pocetCiarok, jePlna) {
     const s = document.createElement('div');
     s.className = 'skupina' + (jePlna ? ' plna' : '');
@@ -378,11 +264,10 @@ Index · HTML
     }
     return s;
   }
- 
+
   nacitaj();
   setInterval(nacitaj, 10000);
 </script>
- 
+
 </body>
 </html>
- 
