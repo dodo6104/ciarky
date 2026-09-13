@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Čiarky</title>
+<style>
+  :root {
+    --tabula: #26332f;
+    --tabula-tmava: #1c2623;
+    --krieda: #f2efe6;
+    --karin: #e0a2b4;
+    --dominik: #8fb8c9;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--tabula);
+    background-image: radial-gradient(circle at 30% 20%, rgba(255,255,255,.04), transparent 60%);
+    color: var(--krieda);
+    font-family: Georgia, "Times New Roman", serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    gap: 28px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: normal;
+    letter-spacing: .12em;
+    opacity: .75;
+  }
+
+  .tabulka {
+    display: flex;
+    gap: 48px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .hrac {
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .ikona {
+    font-size: 44px;
+    line-height: 1;
+    margin-bottom: -4px;
+  }
+
+  .ikona.skryta { visibility: hidden; }
+
+  .tlacidlo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 2px solid rgba(242,239,230,.35);
+    background: var(--farba);
+    color: var(--tabula-tmava);
+    font-family: inherit;
+    font-size: 24px;
+    letter-spacing: .04em;
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease;
+    box-shadow: 0 10px 0 rgba(0,0,0,.25);
+  }
+
+  .tlacidlo:hover { transform: translateY(-2px); }
+  .tlacidlo:active {
+    transform: translateY(8px);
+    box-shadow: 0 2px 0 rgba(0,0,0,.25);
+  }
+  .tlacidlo:focus-visible { outline: 3px solid var(--krieda); outline-offset: 6px; }
+
+  .cislo {
+    font-size: 46px;
+    line-height: 1;
+  }
+
+  .ciarky {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    min-height: 44px;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .skupina {
+    position: relative;
+    display: flex;
+    gap: 6px;
+    height: 40px;
+  }
+
+  .ciarka {
+    width: 3px;
+    height: 40px;
+    background: var(--krieda);
+    border-radius: 2px;
+  }
+
+  .skupina.plna::after {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    width: calc(100% + 12px);
+    height: 3px;
+    background: var(--krieda);
+    border-radius: 2px;
+    transform: rotate(-20deg);
+  }
+
+  .mensie {
+    background: none;
+    border: 1px solid rgba(242,239,230,.3);
+    color: var(--krieda);
+    font-family: inherit;
+    font-size: 15px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  .mensie:hover { border-color: var(--krieda); }
+
+  .prazdne { opacity: .35; font-size: 15px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tlacidlo { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Čiarky</h1>
+
+<div class="tabulka">
+  <div class="hrac">
+    <div class="ikona" aria-hidden="true">🤡</div>
+    <button class="tlacidlo" style="--farba: var(--karin)" onclick="pridaj('karin')">Karin</button>
+    <div class="cislo" id="cislo-karin">0</div>
+    <div class="ciarky" id="ciarky-karin"><span class="prazdne">zatiaľ nič</span></div>
+    <button class="mensie" onclick="uber('karin')">Odobrať čiarku</button>
+  </div>
+
+  <div class="hrac">
+    <div class="ikona" aria-hidden="true">😇</div>
+    <button class="tlacidlo" style="--farba: var(--dominik)" onclick="pridaj('dominik')">Dominik</button>
+    <div class="cislo" id="cislo-dominik">0</div>
+    <div class="ciarky" id="ciarky-dominik"><span class="prazdne">zatiaľ nič</span></div>
+    <button class="mensie" onclick="uber('dominik')">Odobrať čiarku</button>
+  </div>
+</div>
+
+<button class="mensie" onclick="vynuluj()">Vynulovať obe</button>
+
+<script>
+  const KLUC = 'ciarky-stav';
+  const stav = { karin: 0, dominik: 0 };
+
+  function nacitaj() {
+    try {
+      const ulozene = JSON.parse(localStorage.getItem(KLUC));
+      if (ulozene) {
+        stav.karin = Number(ulozene.karin) || 0;
+        stav.dominik = Number(ulozene.dominik) || 0;
+      }
+    } catch (e) {
+      // ukladanie nie je dostupné, ide sa od nuly
+    }
+    vykresli('karin');
+    vykresli('dominik');
+  }
+
+  function uloz() {
+    try {
+      localStorage.setItem(KLUC, JSON.stringify(stav));
+    } catch (e) {
+      // ukladanie nie je dostupné
+    }
+  }
+
+  function pridaj(kto) {
+    stav[kto]++;
+    vykresli(kto);
+    uloz();
+  }
+
+  function uber(kto) {
+    if (stav[kto] > 0) stav[kto]--;
+    vykresli(kto);
+    uloz();
+  }
+
+  function vynuluj() {
+    stav.karin = 0;
+    stav.dominik = 0;
+    vykresli('karin');
+    vykresli('dominik');
+    uloz();
+  }
+
+  function vykresli(kto) {
+    const pocet = stav[kto];
+    document.getElementById('cislo-' + kto).textContent = pocet;
+
+    const box = document.getElementById('ciarky-' + kto);
+    box.innerHTML = '';
+
+    if (pocet === 0) {
+      const p = document.createElement('span');
+      p.className = 'prazdne';
+      p.textContent = 'zatiaľ nič';
+      box.appendChild(p);
+      return;
+    }
+
+    const plneSkupiny = Math.floor(pocet / 5);
+    const zvysok = pocet % 5;
+
+    for (let i = 0; i < plneSkupiny; i++) {
+      box.appendChild(skupina(4, true));
+    }
+    if (zvysok > 0) {
+      box.appendChild(skupina(zvysok, false));
+    }
+  }
+
+  function skupina(pocetCiarok, jePlna) {
+    const s = document.createElement('div');
+    s.className = 'skupina' + (jePlna ? ' plna' : '');
+    for (let i = 0; i < pocetCiarok; i++) {
+      const c = document.createElement('div');
+      c.className = 'ciarka';
+      s.appendChild(c);
+    }
+    return s;
+  }
+
+  nacitaj();
+</script>
+
+</body>
+</html>
